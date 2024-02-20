@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <title>Employee Details Form</title>
+    <link rel="stylesheet" href="../static/certificate.css">
+</head>
+
+<body>
+
+    <div class="background">
+        <div class="container">
+            <div class="screen">
+                <div class="screen-body">
+                    <div class="screen-body-item">
+                        <div class="app-title">
+                            <span>Enter Employee details:</span>
+                        </div>
+                        <div class="app-form">
+                            <form method="post" id="certificateform" action="/submitform">
+                                <div class="app-form-group">
+                                    <input class="app-form-control" placeholder="Name" type="text" id="name" name="name"
+                                        required>
+                                </div>
+                                <div class="app-form-group">
+                                    <select class="app-form-control" id="jobRole" name="jobRole" required>
+                                        <option value="Machine Learning">Machine Learning</option>
+                                        <option value="Data Science">Data Science</option>
+                                        <option value="Artificial Intelligence">Artificial Intelligence</option>
+                                        <option value="Web Developer">Web Developer</option>
+                                        <option value="Fundraising Coordinator">Fundraising Coordinator</option>
+                                        <option value="Volunteer">Volunteer</option>
+                                        <option value="Coding Tutor">Coding Tutor</option>
+                                        <option value="Human Resource Management">Human Resource Management</option>
+                                        <option value="Social Media Marketing">Social Media Marketing</option>
+                                        <option value="Digital Marketing">Digital Marketing</option>
+                                        <option value="Business Development Associate">Business Development Associate
+                                        </option>
+                                        <option value="Content Writer">Content Writer</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                
+                                <div id="customRoleInput" style="display: none;">
+                                    <label for="customRole"><a>Enter Custom Role:</a></label>
+                                    <input class="app-form-control" type="text" id="customRole" name="customRole" placeholder="Custom Role">
+                                </div>
+                                <div class="app-form-group">
+                                    <a>Enter Email:</a>
+                                    <input class="app-form-control" placeholder="EMAIL" type="email" id="email"
+                                        name="email" required>
+                                </div>
+                                <div class="app-form-group message">
+                                    <a>Enter Joining Date: </a>
+                                    <input class="app-form-control" placeholder="Joining Date" type="date"
+                                        id="joiningDate" name="joiningDate" required>
+                                </div>
+                                <div class="app-form-group message">
+                                    <a>Enter Ending Date: </a>
+                                    <input class="app-form-control" placeholder="Ending Date" type="date"
+                                        id="endingDate" name="endingDate" required>
+                                </div>
+                                <div class="app-form-group">
+                                    <input class="app-form-control" placeholder="ReferenceNo" type="text"
+                                        id="referenceno" name="referenceno" value="<%=referenceno%>" disabled>
+                                </div>
+                                <div class="app-form-group buttons">
+                                    <button class="app-form-button" id="cancelButton">CANCEL</button>
+                                    <button class="app-form-button" type="submit">SUBMIT</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('cancelButton').addEventListener('click', function () {
+            // Redirect to the "/Home" route
+            window.location.href = '/Home';
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            // Get a reference to the dropdown element
+            var jobRoleDropdown = document.getElementById("jobRole");
+
+            // Add an event listener for the 'change' event on the dropdown
+            jobRoleDropdown.addEventListener("change", function (event) {
+                // Get the selected value from the dropdown
+                var selectedValue = event.target.value;
+
+                // Call the checkCustomRole function with the selected value
+                checkCustomRole(selectedValue);
+            });
+        });
+        function checkCustomRole(value) {
+            console.log("Selected value:", value);
+            var customRoleInput = document.getElementById("customRoleInput");
+            if (value === "Other") {
+                console.log("Showing custom input field");
+                customRoleInput.style.display = "block"; // Show the custom input field
+            } else {
+                console.log("Hiding custom input field");
+                customRoleInput.style.display = "none"; // Hide the custom input field
+            }
+        }
+    </script>
+</body>
+
+</html>

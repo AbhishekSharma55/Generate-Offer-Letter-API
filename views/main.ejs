@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <title>Home Page</title>
+  <link rel="stylesheet" href="../static/main.css">
+  <script src="https://kit.fontawesome.com/edc8157dcf.js" crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+  <script>
+    function generate_certificate() {
+      window.location.href = '/Generate-Certificate';
+    }
+    let counter = 0; // Counter for tracking the sno locally
+    let currentPage = 1; // Current page
+    document.addEventListener('DOMContentLoaded', () => {
+
+      const searchForm = document.getElementById('searchForm');
+      const searchButton = document.getElementById('searchButton');
+
+      searchButton.addEventListener('click', () => {
+        const searchName = document.getElementById('searchName').value;
+        if (searchName.trim() !== '') {
+          fetch(`/search`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ searchName })
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                // Render search results
+                loadPage(data.data);
+              } else {
+                console.error('Error:', data.error);
+              }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+      });
+
+      // Function to handle initial load or search results load
+      function loadPage(data) {
+        const tableBody = document.getElementById('searchResultsBody');
+        tableBody.innerHTML = ''; // Clear existing table data
+        counter = 0; // Reset the counter on each load
+        if (data.length === 0) {
+          const newRow = tableBody.insertRow();
+          const cell = newRow.insertCell(0);
+          cell.colSpan = 8;
+          cell.textContent = 'No results found';
+          loadMoreBtn.style.display = 'none'; // Hide Load More button
+        } else {
+          appendDataToTable(data);
+          // Show Load More button
+          loadMoreBtn.style.display = 'block';
+        }
+      }
+
+      // Function to append new data to the table
+      function appendDataToTable(newData) {
+        const tableBody = document.getElementById('searchResultsBody');
+        newData.forEach(item => {
+          const newRow = tableBody.insertRow();
+          counter++; // Increment the counter
+          newRow.innerHTML = `
+        <td>${counter}</td>
+        <td>${item.name}</td>
+        <td>${item.role}</td>
+        <td>${item.from}</td>
+        <td>${item.to}</td>
+        <td>${item.email}</td>
+        <td>${item.referenceno}</td>
+        <td><a href="/update/${item._id}">Update</a></td>
+        <td><a href="/download/${item._id}">Download</a></td>
+      `;
+        });
+      }
+
+      const notificationMessage = '<%= typeof notification !== "undefined" ? notification : "" %>';
+      if (notificationMessage) {
+        showNotification(notificationMessage);
+      }
+      const loadMoreBtn = document.getElementById('loadMoreBtn');
+      loadMoreBtn.addEventListener('click', () => {
+        loadMore();
+      })
+      function loadMore() {
+
+        const nextPage = currentPage + 1;
+        fetch(`/dynamic-search?page=${nextPage}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.length > 0) {
+              currentPage = nextPage;
+              appendDataToTable(data);
+            } else {
+              // No more data, hide the Load More button
+              loadMoreBtn.style.display = 'none';
+            }
+          })
+          .catch(error => console.error('Error:', error));
+      }
+      const tableBody = document.getElementById('searchResultsBody');
+
+      // Function to append new data to the table
+      function appendDataToTable(newData) {
+        // newData.reverse(); // Reverse the order of the new data
+        newData.forEach(item => {
+          const newRow = tableBody.insertRow();
+          counter++; // Increment the counter
+          newRow.innerHTML = `
+            <td>${counter}</td>
+            <td>${item.name}</td>
+            <td>${item.role}</td>
+            <td>${item.from}</td>
+            <td>${item.to}</td>
+            <td>${item.email}</td>
+            <td>${item.referenceno}</td>
+            <td><a href="/update/${item._id}">Update</a></td>
+            <td><a href="/download/${item._id}">Download</a></td>
+        `;
+
+        });
+      }
+
+      // Function to handle initial load or search results load
+      function loadPage(data) {
+        tableBody.innerHTML = ''; // Clear existing table data
+        counter = 0; // Reset the counter on each load
+        if (data.length === 0) {
+          const newRow = tableBody.insertRow();
+          const cell = newRow.insertCell(0);
+          cell.colSpan = 8;
+          cell.textContent = 'No results found';
+          loadMoreBtn.style.display = 'none'; // Hide Load More button
+        } else {
+          appendDataToTable(data);
+          // Show Load More button
+          loadMoreBtn.style.display = 'block';
+        }
+      }
+
+      // Initial load on page load
+      fetch('/dynamic-search?page=1')
+        .then(response => response.json())
+        .then(data => {
+          // Get the table body element
+          const tbody = document.querySelector('#data-table tbody');
+
+          // Clear existing rows
+          tbody.innerHTML = '';
+
+          // Populate the table with data
+          loadPage(data);
+        })
+        .catch(error => console.error('Error fetching data:', error));
+
+      // Event listener for dynamic searching
+      document.querySelector('input[name="searchName"]').addEventListener('input', function () {
+        const inputValue = this.value;
+        if (inputValue.trim() !== '') {
+          fetch(`/dynamic-search?name=${encodeURIComponent(inputValue)}&page=1`)
+            .then(response => response.json())
+            .then(data => {
+              loadPage(data);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+      });
+
+      // Assign the loadMore function to the button click event
+      loadMoreBtn.addEventListener('click', loadMore);
+
+    });
+
+  </script>
+  <header>
+    <div id="notificationPanel" class="notification-panel hidden">
+      <span id="notificationMessage"></span>
+    </div>
+    <img id="logo" src="../static/SuvidhaLogo.png" alt="Company Logo">
+    <form id="searchForm" class="searchform">
+      <input class="searchnameclass" type="text" id="searchName" name="searchName" placeholder="Search Name"
+        value="<%= typeof searchName !== 'undefined' ? searchName : '' %>">
+      <button type="button" id="searchButton" class="searchbutton"><i class="fa-solid fa-magnifying-glass"></i></button>
+    </form>
+
+    <div class="generate_text" onclick="generate_certificate()">
+      <button id="generate"><a href="/Generate-Certificate">Generate Offer Letter</a></button>
+    </div>
+
+  </header>
+  <div class="background">
+    <div class="container">
+      <div class="screen">
+        <div class="screen-body">
+          <div class="screen-body-item">
+            <table id="data-table">
+              <thead>
+                <tr>
+                  <td>S.no.</td>
+                  <td>Name</td>
+                  <td>Role</td>
+                  <td>Joining Date</td>
+                  <td>Completion Date</td>
+                  <td>Email</td>
+                  <td>Reference No</td>
+                  <td>Update</td>
+                  <td>Download</td>
+                </tr>
+              </thead>
+              <tbody id="searchResultsBody">
+                <% if (data.length===0) { %>
+                  <tr>
+                    <td colspan="8">No results found</td>
+                  </tr>
+                  <% } else { %>
+                    <% data.forEach((item, index)=> { %>
+                      <tr>
+                        <td>
+                          <%= data.length - index %>
+                        </td>
+                        <td>
+                          <%= item.name %>
+                        </td>
+                        <td>
+                          <%= item.role %>
+                        </td>
+                        <td>
+                          <%= item.from %>
+                        </td>
+                        <td>
+                          <%= item.to %>
+                        </td>
+                        <td>
+                          <%= item.email %>
+                        </td>
+                        <td>
+                          <%= item.referenceno %>
+                        </td>
+                        <td><a href="/update/<%= item._id %>">Update</a></td>
+                        <td><a href="/download/<%= item._id %>">Download</a></td>
+                      </tr>
+                      <% }); %>
+                        <% } %>
+              </tbody>
+            </table>
+            <button id="loadMoreBtn">Load More</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="../static/main.js"></script>
+</body>
+
+</html>

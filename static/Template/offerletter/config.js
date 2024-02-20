@@ -1,0 +1,1 @@
+IDRViewer.config = {"pagecount":1,"title":"Vaishnavi Mundada - DS","author":"","subject":"","keywords":"","creator":"","producer":"Skia/PDF m123 Google Docs Renderer","creationdate":"","moddate":"","trapped":"","fileName":"offerletter.pdf","bounds":[[935,1210]],"bookmarks":[],"thumbnailType":"jpg","pageType":"html","pageLabels":[]};

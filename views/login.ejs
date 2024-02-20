@@ -1,0 +1,55 @@
+<!-- views/login.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="../static/login.css">
+    <title>Login Page</title>
+</head>
+
+<body>
+
+    <div class="background">
+        <div class="container">
+            <div class="screen">
+                <div class="screen-body">
+                    <div class="screen-body-item">
+                        <div class="app-title">
+                            <span>Log in using Email:</span>
+                        </div>
+                        
+                        <!-- Display error message if exists -->
+                        <div class="error-message">
+                            <% if (error) { %>
+                                <p><%= error %></p>
+                            <% } %>
+                        </div>
+
+                        <div class="app-form">
+                            <form method="post" id="login" action="/login">
+                                <div class="app-form-group">
+                                    <input class="app-form-control" placeholder="email" type="text" id="name"
+                                        name="name" >
+                                </div>
+                                <div class="app-form-group">
+                                    <input class="app-form-control" placeholder="password" type="password" id="password"
+                                        name="password" >
+                                </div>
+                                <div class="app-form-group buttons">
+                                    <button class="app-form-button" type="submit">Log In!</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../static/login.js"></script>
+</body>
+
+</html>
