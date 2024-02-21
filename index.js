@@ -298,5 +298,5 @@ app.use((req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}/`);
+  console.log(`Server running at https://offer-letter-generate.onrender.com`);
 });
