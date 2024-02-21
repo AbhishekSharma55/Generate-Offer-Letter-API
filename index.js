@@ -8,7 +8,7 @@ const randomString = require('randomstring');
 const fs = require('fs');
 const mongoose = require('mongoose');
 const templatePath = path.join(__dirname, 'static', 'Template', 'template.html');
-mongoose.connect('mongodb+srv://abhisheksharma05:QKtGs0AigQ0dX6jb@cluster0.kzmywqs.mongodb.net/?retryWrites=true&w=majority');
+mongoose.connect('mongodb+srv://abhisheksharma05:QKtGs0AigQ0dX6jb@cluster0.kzmywqs.mongodb.net/Offer_Generation_DB');
 const db = mongoose.connection;
 
 const offerletterSchema = new mongoose.Schema({
@@ -28,26 +28,6 @@ const loginSchema = new mongoose.Schema({
 
 const Employe = mongoose.model('Employe', offerletterSchema);
 const logins = mongoose.model('Logindata', loginSchema);
-//
-
-const insertLoginData = async () => {
-  try {
-    // Create a new document
-    const newLoginData = new logins({
-      email: 'test@gmail.com',
-      password: 'test123',
-    });
-    
-    // Save the document to the database
-    const savedLoginData = await newLoginData.save();
-    console.log('Login data inserted successfully:', savedLoginData);
-  } catch (error) {
-    console.error('Error inserting login data:', error);
-  }
-};
-insertLoginData();
-
-//
 
 const app = express();
 app.use(compression());
@@ -320,5 +300,5 @@ app.use((req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server running at https://offer-letter-generate.onrender.com`);
+  console.log(`Server running at https://offer-letter-generate-api.onrender.com/`);
 });
