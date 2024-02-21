@@ -28,6 +28,26 @@ const loginSchema = new mongoose.Schema({
 
 const Employe = mongoose.model('Employe', offerletterSchema);
 const logins = mongoose.model('Logindata', loginSchema);
+insertLoginData();
+//
+
+const insertLoginData = async () => {
+  try {
+    // Create a new document
+    const newLoginData = new logins({
+      email: 'test@gmail.com',
+      password: 'test123',
+    });
+
+    // Save the document to the database
+    const savedLoginData = await newLoginData.save();
+    console.log('Login data inserted successfully:', savedLoginData);
+  } catch (error) {
+    console.error('Error inserting login data:', error);
+  }
+};
+
+//
 
 const app = express();
 app.use(compression());
@@ -58,6 +78,8 @@ app.get('/', (req, res) => {
   const error = req.query.error || null;
   res.render('login', { error });
 });
+
+
 
 app.get('/login', (req, res) => {
   const error = req.query.error || null;
