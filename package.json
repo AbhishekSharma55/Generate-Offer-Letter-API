@@ -11,5 +11,24 @@
     "puppet": "^1.5.0",
     "puppeteer": "^21.11.0",
     "readline": "^1.3.0"
-  }
+  },
+  "name": "generate-offer-letter",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "build": "echo 'No build step required for deployment'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbhishekSharma55/Offer-Letter-Generate.git"
+  },
+  "author": "Abhishek Sharma",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AbhishekSharma55/Offer-Letter-Generate/issues"
+  },
+  "homepage": "https://github.com/AbhishekSharma55/Offer-Letter-Generate#readme",
+  "description": ""
 }
