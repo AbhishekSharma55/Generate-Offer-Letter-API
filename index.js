@@ -4,10 +4,11 @@ const getdata = require('./Fetch_data');
 const path = require('path');
 const compression = require('compression');
 const puppeteer = require('puppeteer');
+const randomString = require('randomstring');
 const fs = require('fs');
 const mongoose = require('mongoose');
 const templatePath = path.join(__dirname, 'static', 'Template', 'template.html');
-mongoose.connect('mongodb://127.0.0.1:27017/Test_DB');
+mongoose.connect('mongodb+srv://abhisheksharma05:IkHn4I1fMgpoCN1u@cluster0.kzmywqs.mongodb.net/');
 const db = mongoose.connection;
 
 const offerletterSchema = new mongoose.Schema({
@@ -32,11 +33,15 @@ const app = express();
 app.use(compression());
 app.use('/static', express.static('static', { maxAge: 31536000 }));
 app.use(express.urlencoded());
+const secretKey = randomString.generate({
+  length: 64, // Adjust the length as needed
+  charset: 'alphanumeric'
+});
 app.use(session({
-  secret: 'your-secret-key',
+  secret: secretKey,
   resave: false,
-  saveUninitialized: true,
-  cookie: { maxAge: 30 * 60 * 1000 },
+  saveUninitialized: false,
+  // Add other session options as needed
 }));
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -291,7 +296,7 @@ app.use((req, res) => {
   res.status(404).send("404 page not found!");
 });
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}/`);
 });
