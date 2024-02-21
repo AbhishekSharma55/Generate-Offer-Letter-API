@@ -227,7 +227,9 @@ app.get('/download/:employeeId', async (req, res) => {
 
     const pdfContent = generatePdfContent(employee);
 
-    const browser = await puppeteer.launch();
+    const browser = await puppeteer.launch({
+      executablePath: '/usr/bin/google-chrome-stable', // Specify the Chrome executable path
+    });
     const page = await browser.newPage();
     await page.setContent(pdfContent, { waitUntil: 'domcontentloaded' });
     const pdfBuffer = await page.pdf();
@@ -241,6 +243,7 @@ app.get('/download/:employeeId', async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
 
 function generatePdfContent(employee) {
   const template = fs.readFileSync(templatePath, 'utf-8');
