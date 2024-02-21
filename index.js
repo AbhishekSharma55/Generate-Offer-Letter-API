@@ -28,7 +28,6 @@ const loginSchema = new mongoose.Schema({
 
 const Employe = mongoose.model('Employe', offerletterSchema);
 const logins = mongoose.model('Logindata', loginSchema);
-insertLoginData();
 //
 
 const insertLoginData = async () => {
@@ -38,7 +37,7 @@ const insertLoginData = async () => {
       email: 'test@gmail.com',
       password: 'test123',
     });
-
+    
     // Save the document to the database
     const savedLoginData = await newLoginData.save();
     console.log('Login data inserted successfully:', savedLoginData);
@@ -46,6 +45,7 @@ const insertLoginData = async () => {
     console.error('Error inserting login data:', error);
   }
 };
+insertLoginData();
 
 //
 
