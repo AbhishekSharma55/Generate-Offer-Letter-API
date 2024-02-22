@@ -228,7 +228,8 @@ app.get('/download/:employeeId', async (req, res) => {
     const pdfContent = generatePdfContent(employee);
 
     const browser = await puppeteer.launch({
-      executablePath: '/usr/bin/google-chrome-stable', // Specify the Chrome executable path
+      executablePath: '/usr/bin/google-chrome-stable',
+      args: ['--no-sandbox'], // Add this line to include the --no-sandbox flag
     });
     const page = await browser.newPage();
     await page.setContent(pdfContent, { waitUntil: 'domcontentloaded' });
