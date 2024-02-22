@@ -8,7 +8,7 @@ const randomString = require('randomstring');
 const fs = require('fs');
 const mongoose = require('mongoose');
 const templatePath = path.join(__dirname, 'static', 'Template', 'template.html');
-mongoose.connect('mongodb+srv://abhisheksharma05:QKtGs0AigQ0dX6jb@cluster0.kzmywqs.mongodb.net/Offer_Generation_DB');
+mongoose.connect('mongodb+srv://sonalgodshelwar4:10August@1996@cluster0.bkkffuz.mongodb.net//Offer_Generation_DB');
 const db = mongoose.connection;
 
 const offerletterSchema = new mongoose.Schema({
