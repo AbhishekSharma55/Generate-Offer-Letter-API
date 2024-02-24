@@ -9,9 +9,6 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 const templatePath = path.join(__dirname, 'static', 'Template', 'template.html');
 mongoose.connect('mongodb+srv://sonalgodshelwar4:10August%401996@cluster0.bkkffuz.mongodb.net/Offer_Generation_DB');
-
-const db = mongoose.connection;
-
 const offerletterSchema = new mongoose.Schema({
   sno: Number,
   name: String,
@@ -67,7 +64,7 @@ app.get('/login', (req, res) => {
   res.render('login', { error });
 });
 
-app.get('/Home', requireLogin, async (req, res) => {
+app.get('/Home', requireLogin,async (req, res) => {
   try {
     const page = 1;
     const RESULTS_PER_PAGE = 10;
@@ -83,16 +80,13 @@ app.get('/Home', requireLogin, async (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
-
-app.get('/secure-route', requireLogin, (req, res) => {
-  res.send('This is a secure route');
-});
+const initialSno = 20011; // Initial value for sno
 
 app.get('/Generate-Certificate', requireLogin, async (req, res) => {
   try {
     const latestEmployee = await Employe.findOne().sort({ sno: -1 });
-    const nextSno = latestEmployee ? latestEmployee.sno + 1 : 1;
-    const referenceno = 'REF' + nextSno.toString().padStart(4, '0');
+    const nextSno = latestEmployee ? latestEmployee.sno + 1 : initialSno;
+    const referenceno = 'SMM2024INT' + nextSno.toString().padStart(5, '0');
     res.render('certificate.ejs', { referenceno });
   } catch (error) {
     console.error('Error:', error);
@@ -104,8 +98,8 @@ app.post('/submitform', requireLogin, async (req, res) => {
   try {
     const { name, jobRole, customRole, joiningDate, endingDate, email } = req.body; // Extract customRole as well
     const latestEmployee = await Employe.findOne().sort({ sno: -1 });
-    const nextSno = latestEmployee ? latestEmployee.sno + 1 : 1;
-    const referenceno = 'REF' + nextSno.toString().padStart(4, '0');
+    const nextSno = latestEmployee ? latestEmployee.sno + 1 : initialSno;
+    const referenceno = 'SMM2024INT' + nextSno.toString().padStart(5, '0');
 
     // Determine the role value based on the selected role or custom role
     let role = jobRole;
@@ -145,7 +139,6 @@ app.post('/submitform', requireLogin, async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 });
-
 app.get('/update/:employeeId', async (req, res) => {
   try {
     let employeeId = req.params.employeeId;
@@ -228,10 +221,7 @@ app.get('/download/:employeeId', async (req, res) => {
 
     const pdfContent = generatePdfContent(employee);
 
-    const browser = await puppeteer.launch({
-      executablePath: '/usr/bin/google-chrome-stable',
-      args: ['--no-sandbox'], // Add this line to include the --no-sandbox flag
-    });
+    const browser = await puppeteer.launch();
     const page = await browser.newPage();
     await page.setContent(pdfContent, { waitUntil: 'domcontentloaded' });
     const pdfBuffer = await page.pdf();
@@ -246,14 +236,58 @@ app.get('/download/:employeeId', async (req, res) => {
   }
 });
 
-
 function generatePdfContent(employee) {
   const template = fs.readFileSync(templatePath, 'utf-8');
+  //
+  // Example string containing two words separated by a space
+  const inputString = employee.role;
+
+  // Split the string into an array of words using the space as a delimiter
+  const wordsArray = inputString.split(" ");
+  if (wordsArray[1] == undefined) {
+    wordsArray[1] = "";
+  }
+  // Extract each word from the array and store them in separate variables
+  const firstWord = wordsArray[0];
+  const secondWord = wordsArray[1];
+  const inputDateString = employee.from; // Example input date string
+  const parts = inputDateString.split('-');
+  let year = parseInt(parts[0]);
+  const month = parseInt(parts[1]) - 1; // Months are zero-indexed
+  const day = parseInt(parts[2]);
+  
+  // Handling dates before 100 AD
+  if (year < 100) {
+      // Assuming AD years are provided with a positive sign, otherwise adjust accordingly
+      const sign = year < 0 ? -1 : 1;
+      year = Math.abs(year);
+      year = sign * year; // Adjust the year according to the sign
+  }
+  
+  // Create a Date object representing the input date
+  const inputDate = new Date(year, month, day);
+  
+  // Subtract one day from the input date
+  const previousDate = new Date(inputDate);
+  previousDate.setDate(inputDate.getDate() - 1);
+  
+  // Get the year, month, and day of the previous date
+  const previousYear = previousDate.getFullYear();
+  const previousMonth = previousDate.getMonth() + 1; // Add 1 to month since it's zero-indexed
+  const previousDay = previousDate.getDate();
+  
+  // Format the previous date as dd/mm/yyyy
+  const formattedPreviousDate = `${previousDay.toString().padStart(2, '0')}/${previousMonth.toString().padStart(2, '0')}/${previousYear}`;
+  
   const pdfContent = template
     .replace('{{name}}', employee.name)
-    .replace('{{position}}', employee.role)
+    .replace('{{position1}}', firstWord)
+    .replace('{{position2}}', secondWord)
+    .replace('{{position1}}', firstWord)
+    .replace('{{position2}}', secondWord)
     .replace('{{joining_data}}', employee.from)
     .replace('{{ending_data}}', employee.to)
+    .replace('{{date}}',formattedPreviousDate)
     .replace('{{reference}}', employee.referenceno);
   return pdfContent;
 }
@@ -304,6 +338,4 @@ app.use((req, res) => {
 });
 
 const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server running at https://offer-letter-generate-api.onrender.com/`);
-});
+app.listen(port, () => { });
